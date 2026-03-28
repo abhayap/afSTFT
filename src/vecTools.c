@@ -29,12 +29,7 @@ void vtClr(float* vec, int N)
 #ifdef VDSP
     vDSP_vclr(vec,1, N);
 #else
-    float *p1 = vec;
-    for (int k=0;k<N;k++)
-    {
-        *p1=0.0f;
-        p1++;
-    }
+    memset(vec, 0, sizeof(float) * N);
 #endif
 }
 
@@ -59,7 +54,7 @@ void vtInitFFT(void** planPr, float* timeData, float* frequencyData, int log2n)
     vtFFT *h = (vtFFT*)(*planPr);
     h->timeData = timeData;
     h->frequencyData = frequencyData;
-    h->N = powf(2,log2n);
+    h->N = 1 << log2n;
     h->log2n = log2n;
 #ifdef VDSP
     h->FFT = (void*)vDSP_create_fftsetup( h->log2n, FFT_RADIX2);

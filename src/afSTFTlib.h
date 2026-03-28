@@ -38,10 +38,8 @@ typedef struct {
 typedef struct{
     int inChannels;
     int outChannels;
-    int maxChannels;
     int hopSize;
     int hLen;
-    int pr;
     int LDmode;
     int hopIndexIn;
     int hopIndexOut;
@@ -63,7 +61,6 @@ typedef struct{
     int inChannels;
     int outChannels;
     int hopSize;
-    float hybridCoeffs[3];
     complexVector **analysisBuffer;
     int loopPointer;
 

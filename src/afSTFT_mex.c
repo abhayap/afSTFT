@@ -78,8 +78,8 @@ void mexFunction(int nlhs, mxArray *plhs[ ],int nrhs, const mxArray *prhs[ ])
                 free(inverseFD[ch].re);
                 free(inverseFD[ch].im);
             }
-            inverseTD=(float**)malloc(sizeof(float*)*inverseChannels);
-            inverseFD=(complexVector*)malloc(sizeof(complexVector)*inverseChannels);
+            free(inverseTD);
+            free(inverseFD);
             isInitialized = 0;
         }
     }
@@ -106,6 +106,7 @@ void mexFunction(int nlhs, mxArray *plhs[ ],int nrhs, const mxArray *prhs[ ])
                 }
                 else
                 {
+                    mxFree(parameter);
                     mexWarnMsgTxt("The hybrid mode is meaningful (and allowed) on hopsizes 64 or 128 only.");
                     return;
                 }
@@ -115,6 +116,7 @@ void mexFunction(int nlhs, mxArray *plhs[ ],int nrhs, const mxArray *prhs[ ])
                 lowDelayMode = 1;
             } else
             {
+                mxFree(parameter);
                 mexWarnMsgTxt("The optional parameters are 'hybrid' and 'low_delay' (or both as separate parameters, or neither)");
                 return;
             }
@@ -205,15 +207,15 @@ void mexFunction(int nlhs, mxArray *plhs[ ],int nrhs, const mxArray *prhs[ ])
         else
             
         {
-            size_t dims = mxGetNumberOfDimensions(prhs[0]);
-            const size_t* dim = mxGetDimensions_730(prhs[0]);
+            mwSize dims = mxGetNumberOfDimensions(prhs[0]);
+            const mwSize* dim = mxGetDimensions(prhs[0]);
             
             if (dims < 3 && dim[1] == forwardChannels && dim[0] != (hopSize+1+4*hybridMode))
             {
                 /*** FORWARD PROCESSING ***/
                 size_t TDsamples = dim[0];
-                size_t outDim = 3;
-                size_t outDims[3];
+                mwSize outDim = 3;
+                mwSize outDims[3];
                 outDims[0]=hopSize+1+4*hybridMode;
                 outDims[1]=TDsamples/hopSize;
                 outDims[2]=forwardChannels;
@@ -223,7 +225,7 @@ void mexFunction(int nlhs, mxArray *plhs[ ],int nrhs, const mxArray *prhs[ ])
                     outDim = 2;
                 }
                 prIn = mxGetPr(prhs[0]);
-                plhs[0]=mxCreateNumericArray_730(outDim, outDims, mxDOUBLE_CLASS, mxCOMPLEX);
+                plhs[0]=mxCreateNumericArray(outDim, outDims, mxDOUBLE_CLASS, mxCOMPLEX);
                 prOut = mxGetPr(plhs[0]);
                 piOut = mxGetPi(plhs[0]);
                 FDsample=0;

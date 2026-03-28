@@ -55,6 +55,8 @@ void afSTFTinit(void** handle, int hopSize, int inChannels, int outChannels, int
             break;
         default:
             // No other modes defined
+            free(*handle);
+            *handle = NULL;
             return;
             break;
     }
@@ -75,8 +77,8 @@ void afSTFTinit(void** handle, int hopSize, int inChannels, int outChannels, int
     h->protoFilterI = (float*)malloc(sizeof(float)*h->hLen);
     h->inBuffer = (float**)malloc(sizeof(float*)*h->inChannels);
     h->outBuffer = (float**)malloc(sizeof(float*)*h->outChannels);
-    h->fftProcessFrameTD = (float*)calloc(sizeof(float),h->hopSize*2);
-    h->fftProcessFrameFD  = (float*)calloc(sizeof(float),(h->hopSize+1)*2);
+    h->fftProcessFrameTD = (float*)calloc(h->hopSize*2,sizeof(float));
+    h->fftProcessFrameFD  = (float*)calloc((h->hopSize+1)*2,sizeof(float));
     vtInitFFT(&(h->vtFFT),h->fftProcessFrameTD, h->fftProcessFrameFD, h->log2n);
     
     /* Normalization to ensure 0dB gain */
@@ -330,8 +332,8 @@ void afHybridInit(void** handle, int hopSize, int inChannels, int outChannels)
         h->analysisBuffer[ch] = (complexVector*)malloc(sizeof(complexVector)*7);
         for (sample=0;sample<7;sample++)
         {
-            h->analysisBuffer[ch][sample].re=(float*)calloc(sizeof(float),h->hopSize+1);
-            h->analysisBuffer[ch][sample].im=(float*)calloc(sizeof(float),h->hopSize+1);
+            h->analysisBuffer[ch][sample].re=(float*)calloc(h->hopSize+1,sizeof(float));
+            h->analysisBuffer[ch][sample].im=(float*)calloc(h->hopSize+1,sizeof(float));
         }
     }
 }
