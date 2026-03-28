@@ -46,6 +46,20 @@ void vtVma(float* vec1, float* vec2, float* vec3, int N)
 #endif
 }
 
+/* NEGATE EVERY OTHER ELEMENT (stride 2) */
+void vtNegStride2(float* vec, int N)
+{
+#ifdef VDSP
+    vDSP_vneg(vec, 2, vec, 2, N);
+#else
+    for (int k=0;k<N;k++)
+    {
+        *vec = -*vec;
+        vec+=2;
+    }
+#endif
+}
+
 
 /* FFT INITIALIZATION */
 void vtInitFFT(void** planPr, float* timeData, float* frequencyData, int log2n)
@@ -57,7 +71,7 @@ void vtInitFFT(void** planPr, float* timeData, float* frequencyData, int log2n)
     h->N = 1 << log2n;
     h->log2n = log2n;
 #ifdef VDSP
-    h->FFT = (void*)vDSP_create_fftsetup( h->log2n, FFT_RADIX2);
+    h->FFT = vDSP_create_fftsetup( h->log2n, FFT_RADIX2);
     h->VDSP_split.realp = frequencyData;
     h->VDSP_split.imagp = &(frequencyData[(h->N)/2]);
 #else
@@ -94,7 +108,7 @@ void vtRunFFT(void* planPr, int positiveForForwardTransform)
     if (positiveForForwardTransform > 0) /* FORWARD FFT */
     {
         vDSP_ctoz((DSPComplex*)(h->timeData), 2, &(h->VDSP_split), 1, (h->N)/2);
-        vDSP_fft_zrip((FFTSetup)(h->FFT),&(h->VDSP_split),1, h->log2n, FFT_FORWARD);
+        vDSP_fft_zrip(h->FFT,&(h->VDSP_split),1, h->log2n, FFT_FORWARD);
     }
     else /* INVERSE FFT */
     {

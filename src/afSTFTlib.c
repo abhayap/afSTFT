@@ -223,13 +223,8 @@ void afSTFTinverse(void* handle, complexVector* inFD, float** outTD)
         /* The low delay mode requires this procedure corresponding to the circular shift of the data in the time domain */
         if (h->LDmode == 1)
         {
-            for (k=1;k<h->hopSize;k+=2)
-            {
-                *p3 = -*p3;
-                *p4 = -*p4;
-                p3+=2;
-                p4+=2;
-            }
+            vtNegStride2(p3, h->hopSize/2);
+            vtNegStride2(p4, h->hopSize/2);
         }
         
         /* Inverse FFT */

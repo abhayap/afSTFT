@@ -31,7 +31,9 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
+#ifndef VDSP
 #include "fft4g.h"
+#endif
 
 
 typedef struct {
@@ -51,6 +53,8 @@ typedef struct {
 void vtClr(float* vec, int N);
 
 void vtVma(float* vec1, float* vec2, float* vec3, int N);
+
+void vtNegStride2(float* vec, int N);
 
 void vtInitFFT(void** planPr, float* timeData, float* frequencyData, int log2n);
 
